@@ -25,7 +25,7 @@ public static class DistanceConverter
             unit: SIUnit.Meters
         );
 
-    public static ExponentialNotation ConvertDistance(ExponentialNotation distanceToConvert, SIUnit unitToConvertTo)
+    public static ExponentialNotation Convert(ExponentialNotation distanceToConvert, SIUnit unitToConvertTo)
     {
         ExponentialNotation convertedDistance = distanceToConvert;
 
@@ -41,7 +41,6 @@ public static class DistanceConverter
         return convertedDistance;
     }
 
-
     private static ExponentialNotation ConvertDown(ExponentialNotation distanceToConvert, SIUnit desiredMeasurementUnit)
     {
         ExponentialNotation convertedDistance = distanceToConvert;
@@ -50,15 +49,15 @@ public static class DistanceConverter
             switch (convertedDistance.MeasurementUnits)
             {
                 case SIUnit.Lightyears:
-                    convertedDistance = convertedDistance.MultipliedBy(LightYear_To_AstronomicalUnitsRatio);
+                    convertedDistance = convertedDistance * LightYear_To_AstronomicalUnitsRatio;
                     convertedDistance.MeasurementUnits = SIUnit.AstronomicalUnits;
                     break;
                 case SIUnit.AstronomicalUnits:
-                    convertedDistance = convertedDistance.MultipliedBy(AstronomicalUnit_To_KilometersRatio);
+                    convertedDistance = convertedDistance * AstronomicalUnit_To_KilometersRatio;
                     convertedDistance.MeasurementUnits = SIUnit.Kilometers;
                     break;
                 case SIUnit.Kilometers:
-                    convertedDistance = convertedDistance.MultipliedBy(Kilometers_To_MetersRatio);
+                    convertedDistance = convertedDistance * Kilometers_To_MetersRatio;
                     convertedDistance.MeasurementUnits = SIUnit.Meters;
                     break;
                 default:
@@ -77,15 +76,15 @@ public static class DistanceConverter
             switch (convertedDistance.MeasurementUnits)
             {
                 case SIUnit.AstronomicalUnits:
-                    convertedDistance = convertedDistance.DividedBy(LightYear_To_AstronomicalUnitsRatio);
+                    convertedDistance = convertedDistance / LightYear_To_AstronomicalUnitsRatio;
                     convertedDistance.MeasurementUnits = SIUnit.Lightyears;
                     break;
                 case SIUnit.Kilometers:
-                    convertedDistance = convertedDistance.DividedBy(AstronomicalUnit_To_KilometersRatio);
+                    convertedDistance = convertedDistance / AstronomicalUnit_To_KilometersRatio;
                     convertedDistance.MeasurementUnits = SIUnit.AstronomicalUnits;
                     break;
                 case SIUnit.Meters:
-                    convertedDistance = convertedDistance.DividedBy(Kilometers_To_MetersRatio);
+                    convertedDistance = convertedDistance / Kilometers_To_MetersRatio;
                     convertedDistance.MeasurementUnits = SIUnit.Kilometers;
                     break;
                 default:

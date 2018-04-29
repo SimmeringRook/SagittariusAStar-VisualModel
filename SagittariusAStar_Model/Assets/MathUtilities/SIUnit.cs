@@ -1,6 +1,6 @@
 ﻿public enum SIUnit
 {
-    Error = 0,
+    None = 0,
 
     #region Distance
     Meters = 1,
@@ -17,13 +17,13 @@
     KilogramsPerSolarMass,
 
     #region Velocity
-    MetersPerSecond,
-    KilometersPerSecond,
+    Meters_PerSecond,
+    Kilometers_PerSecond,
     #endregion
 
     #region Acceleration
-    MetersPerSecondsSquared,
-    KilometersPerSecondsSquared,
+    Meters_PerSecondsSquared,
+    Kilometers_PerSecondsSquared,
     #endregion
 
     MetersSquaredPerSecond,
@@ -31,7 +31,29 @@
     MetersCubedPerSecond,
     MetersCubedPerSecondsSquared,
     MetersCubedPerSecondKilogram,
-    MetersCubedPerSecondsSquaredKilograms,
+    MetersCubed_PerSecondsSquared_PerKilograms,
 
+}
 
+public enum SIDistanceUnits
+{
+    None = 0,
+    Meters = 1,
+    Kilometers = 2,
+    AstronomicalUnits = 3,
+    Lightyears = 4,
+}
+
+public enum SIMassUnits
+{
+    None = 0,
+    Kilograms,
+    SolarMasses
+}
+
+public enum SITimeUnits
+{
+    None = 0,
+    PerSecond,
+    PerSecondsSquared
 }

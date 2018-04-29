@@ -2,8 +2,8 @@
 
 public class ExponentialNotation
 {
-    private float value;
-    private int exponent;
+    protected float value;
+    protected int exponent;
     public SIUnit MeasurementUnits;
 
     public ExponentialNotation(float value, int exponent, SIUnit unit)
@@ -17,7 +17,7 @@ public class ExponentialNotation
     /// <summary>
     /// Ensure values are < 10 and > 0; with proper exponents
     /// </summary>
-    private void RecalculateExponents()
+    protected void RecalculateExponents()
     {
 
         if (this.value / 10f > 1f)
@@ -57,70 +57,69 @@ public class ExponentialNotation
     public override string ToString()
     {
         this.RecalculateExponents();
-        return string.Format("{0} * 10^{1}", this.value, this.exponent);
+        return string.Format("{0} * 10^{1} {2}", this.value, this.exponent, this.MeasurementUnits);
     }
 
-    public ExponentialNotation Squared()
+    public static ExponentialNotation operator + (ExponentialNotation en1, ExponentialNotation en2)
     {
-        return this.MultipliedBy(this);
-    }
-
-    public ExponentialNotation Add(ExponentialNotation value2)
-    {
-        if (this.exponent > value2.exponent)
+        if (en1.exponent > en2.exponent)
         {
-            while (this.exponent > value2.exponent)
+            while (en1.exponent > en2.exponent)
             {
-                value2.value /= 10;
-                value2.exponent++;
+                en2.value /= 10;
+                en2.exponent++;
             }
         }
         else
         {
-            while (this.exponent < value2.exponent)
+            while (en1.exponent < en2.exponent)
             {
-                this.value /= 10;
-                this.exponent++;
+                en1.value /= 10;
+                en1.exponent++;
             }
         }
 
         return new ExponentialNotation
             (
-                value: (this.value + value2.value),
-                exponent: this.exponent,
-                unit: this.MeasurementUnits
+                value: (en1.value + en2.value),
+                exponent: en1.exponent,
+                unit: en1.MeasurementUnits
             );
     }
 
-    public ExponentialNotation MultipliedBy(ExponentialNotation value2)
+    public static ExponentialNotation operator * (ExponentialNotation exponentialValue1, ExponentialNotation exponentialValue2)
     {
         var temp = new ExponentialNotation
         (
-            value: this.value * value2.value,
-            exponent: this.exponent + value2.exponent,
-            unit: this.MeasurementUnits
+            value: exponentialValue1.value * exponentialValue2.value,
+            exponent: exponentialValue1.exponent + exponentialValue2.exponent,
+            unit: exponentialValue1.MeasurementUnits
         );
         temp.RecalculateExponents();
         return temp;
     }
 
-    public ExponentialNotation DivideBy(float numberToDivideBy)
+    public static ExponentialNotation operator / (ExponentialNotation exponentialValue, float floatValue)
     {
-        return new ExponentialNotation
+        var temp = new ExponentialNotation
         (
-            value: (this.value / numberToDivideBy),
-            exponent: this.exponent,
-            unit: this.MeasurementUnits
+            value: exponentialValue.value / floatValue,
+            exponent: exponentialValue.exponent,
+            unit: exponentialValue.MeasurementUnits
         );
+        temp.RecalculateExponents();
+        return temp;
     }
 
-    public ExponentialNotation DividedBy(ExponentialNotation numberToDivideBy)
+    public static ExponentialNotation operator / (ExponentialNotation exponentialValue1, ExponentialNotation exponentialValue2)
     {
-        return new ExponentialNotation
+        var temp = new ExponentialNotation
         (
-            value: (this.value / numberToDivideBy.value),
-            exponent: this.exponent - numberToDivideBy.exponent,
-            unit: this.MeasurementUnits
+            value: (exponentialValue1.value / exponentialValue2.value),
+            exponent: exponentialValue1.exponent - exponentialValue2.exponent,
+            unit: exponentialValue1.MeasurementUnits
         );
+        temp.RecalculateExponents();
+        return temp;
     }
 }

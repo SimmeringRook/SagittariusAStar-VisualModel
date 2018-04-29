@@ -7,14 +7,10 @@ public static class IntensityCalculator
     public static ExponentialNotation GravitationalConstantOfTheUniverse = new ExponentialNotation(
             value: 6.674f,
             exponent: -11,
-            unit: SIUnit.MetersCubedPerSecondsSquaredKilograms
+            unit: SIUnit.MetersCubed_PerSecondsSquared_PerKilograms
         );
 
-    private static ExponentialNotation SOLARMASS_TO_KILOGRAM = new ExponentialNotation(
-            value: 2f,
-            exponent: 30,
-            unit: SIUnit.KilogramsPerSolarMass
-        );
+    
 
     /// <summary>
     /// Calculate the Intensity of Gravity at the Surface of the object
@@ -28,35 +24,43 @@ public static class IntensityCalculator
         ExponentialNotation intensity = null;
 
         //Calculate the numerator: Graviational Constant * Mass (in kg)
-        ExponentialNotation massOfObjectInKilograms = ConvertMassToKilograms(massOfObject);
-        intensity = GravitationalConstantOfTheUniverse.MultipliedBy(massOfObjectInKilograms);
+        ExponentialNotation massOfObjectInKilograms = MassConverter.Convert(massOfObject, SIUnit.Kilograms);
+        intensity = GravitationalConstantOfTheUniverse * massOfObjectInKilograms;
 
         //Square the radius
-        ExponentialNotation radiusOfObjectInMeters = DistanceConverter.ConvertDistance(radiusOfObject, SIUnit.Meters);
-        radiusOfObjectInMeters = radiusOfObjectInMeters.Squared();
+        ExponentialNotation radiusOfObjectInMeters = DistanceConverter.Convert(radiusOfObject, SIUnit.Meters);
+        radiusOfObjectInMeters = radiusOfObjectInMeters * radiusOfObjectInMeters;
 
         //Divide the numerator by the radius squared
-        intensity = intensity.DividedBy(radiusOfObjectInMeters);
-
+        intensity = intensity / radiusOfObjectInMeters;
+        intensity.MeasurementUnits = SIUnit.MetersCubed_PerSecondsSquared_PerKilograms;
         //I = (G*M)/(r^2)
         return intensity;
     }
-	
-    private static ExponentialNotation ConvertMassToKilograms(ExponentialNotation massOfObject)
+
+    /// <summary>
+    /// n = distanceFromSource / radiusOfSource
+    /// I / (n^2) = Intensity at DistanceFromSource
+    /// </summary>
+    /// <param name="surfaceIntensity"></param>
+    /// <param name="radiusOfSourceObject"></param>
+    /// <param name="distanceAwayFromSource"></param>
+    /// <returns></returns>
+    public static ExponentialNotation IntensityAtDistance(ExponentialNotation surfaceIntensity, ExponentialNotation radiusOfSourceObject, ExponentialNotation distanceAwayFromSource)
     {
-        ExponentialNotation massOfObjectInKilograms;
-        switch(massOfObject.MeasurementUnits)
-        {
-            case SIUnit.SolarMasses:
-                massOfObjectInKilograms = massOfObject.MultipliedBy(SOLARMASS_TO_KILOGRAM);
-                break;
-            default:
-                massOfObjectInKilograms = massOfObject;
-                break;
-        }
+        ExponentialNotation intensityAtDistance = null;
 
-        return massOfObjectInKilograms;
+        //Convert distances to meters
+
+        //Calculate n: distanceFromSource / radiusOfSource
+        ExponentialNotation multipleOfRadius = distanceAwayFromSource / radiusOfSourceObject;
+        multipleOfRadius = (multipleOfRadius * multipleOfRadius);
+        multipleOfRadius = DistanceConverter.Convert(multipleOfRadius, SIUnit.Meters);
+
+        //Divide Surface Intensity by n^2
+        intensityAtDistance = surfaceIntensity / multipleOfRadius;
+        intensityAtDistance.MeasurementUnits = SIUnit.MetersCubed_PerSecondsSquared_PerKilograms;
+        //I / (n^2)
+        return intensityAtDistance;
     }
-
-
 }
